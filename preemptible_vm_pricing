@@ -1,7 +1,12 @@
-import requests
+import json
 import pandas as pd
+import requests
 
-response = requests.get('https://cloudbilling.googleapis.com/v1/services/6F81-5844-456A/skus?key=<>').json()
-df = pd.json_normalize(response, record_path=["skus"])
-df=df[df['category.usageType']=='Preemptible']
-df.transpose()
+url = 'https://cloudpricingcalculator.appspot.com/static/data/pricelist.json'
+response = requests.get(url)
+data = response.json()
+
+df = pd.DataFrame.from_dict(data["gcp_price_list"])
+
+df = df.loc[:, df.columns.str.contains("PREEMPTIBLE")]
+df
